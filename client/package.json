@@ -1,0 +1,21 @@
+{
+  "private": true,
+  "name": "@meyfa/ddns-client",
+  "type": "module",
+  "main": "dist/main.js",
+  "scripts": {
+    "build": "tsc",
+    "lint": "tsc --noEmit"
+  },
+  "engines": {
+    "node": ">=20",
+    "npm": ">=9"
+  },
+  "devDependencies": {
+    "@types/node": "20.17.9",
+    "typescript": "5.7.2"
+  },
+  "dependencies": {
+    "@meyfa/ddns": "file:.."
+  }
+}

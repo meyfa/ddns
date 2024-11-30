@@ -1,0 +1,12 @@
+{
+  "private": true,
+  "name": "@meyfa/ddns",
+  "scripts": {
+    "lint": "npm --prefix=./client run lint && npm --prefix=./worker run lint",
+    "deploy": "npm --prefix=./worker run deploy"
+  },
+  "engines": {
+    "node": ">=20",
+    "npm": ">=9"
+  }
+}

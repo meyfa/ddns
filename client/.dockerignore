@@ -1,0 +1,14 @@
+**/.DS_Store
+
+**/.gitignore
+**/.gitattributes
+
+**/node_modules
+**/dist
+**/.wrangler
+
+**/Dockerfile
+**/.dockerignore
+
+**/.prettierignore
+**/prettierrc.json
