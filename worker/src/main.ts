@@ -17,9 +17,6 @@ function validateEnvironment(env: Record<string, string | undefined>): Config {
 }
 
 const API = new URL('https://api.cloudflare.com/client/v4/')
-const RATE_LIMIT_MS = 30_000
-
-let lastRequest = 0
 
 export default {
   async fetch(req: Request, env: Record<string, string | undefined>, ctx: unknown): Promise<Response> {
@@ -41,18 +38,6 @@ export default {
     if (!timingSafeEqual(auth, `Bearer ${config.DDNS_SECRET}`)) {
       return new Response('Unauthorized', { status: 401 })
     }
-
-    // Throttle updates to not overload the Cloudflare API
-    const now = Date.now()
-    if (now - lastRequest < RATE_LIMIT_MS) {
-      return new Response('Too Many Requests', {
-        status: 429,
-        headers: {
-          'Retry-After': Math.ceil((lastRequest + RATE_LIMIT_MS - now) / 1000).toString()
-        }
-      })
-    }
-    lastRequest = now
 
     // TOOD support IPv6
     if (!/(\d+\.){3}(\d+)/.test(remoteAddress)) {
