@@ -1,17 +1,9 @@
 {
+  "extends": "../tsconfig.json",
   "compilerOptions": {
-    "lib": ["ES2022"],
-    "target": "ES2022",
-    "module": "NodeNext",
-    "moduleResolution": "nodenext",
     "outDir": "./dist",
-    "verbatimModuleSyntax": true,
-    "strict": true,
-    "esModuleInterop": true,
-    "skipLibCheck": true,
-    "allowJs": true,
-    "declaration": false,
-    "sourceMap": true
+    "sourceMap": true,
+    "noEmit": false
   },
   "include": [
     "src"

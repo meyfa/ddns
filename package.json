@@ -2,11 +2,19 @@
   "private": true,
   "name": "@meyfa/ddns",
   "scripts": {
-    "lint": "npm --prefix=./client run lint && npm --prefix=./worker run lint",
-    "deploy": "npm --prefix=./worker run deploy"
+    "lint": "npm run lint --workspaces",
+    "build": "npm run build --workspace=client",
+    "deploy": "npm run deploy --workspace=worker"
   },
+  "workspaces": [
+    "client",
+    "worker"
+  ],
   "engines": {
     "node": ">=20",
     "npm": ">=9"
+  },
+  "devDependencies": {
+    "typescript": "5.7.2"
   }
 }

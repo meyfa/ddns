@@ -2,6 +2,8 @@
 
 **/.gitignore
 **/.gitattributes
+.github
+renovate.json
 
 **/node_modules
 **/dist

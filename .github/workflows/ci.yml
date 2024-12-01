@@ -19,5 +19,5 @@ jobs:
         with:
           node-version: 20
           cache: npm
-      - run: npm ci && npm --prefix=client ci && npm --prefix=worker ci
+      - run: npm ci
       - run: npm run lint
