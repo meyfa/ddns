@@ -1,0 +1,11 @@
+{
+  "private": true,
+  "name": "@meyfa/ddns-common",
+  "type": "module",
+  "main": "dist/main.js",
+  "types": "dist/main.d.ts",
+  "scripts": {
+    "build": "tsc",
+    "lint": "tsc --noEmit"
+  }
+}

@@ -1,12 +1,9 @@
+import type { UpdateResponse } from '@meyfa/ddns-common'
+
 export interface UpdateOptions {
   url: URL
   secret: string
   signal?: AbortSignal
-}
-
-export interface UpdateResponse {
-  ip: string
-  modified: boolean
 }
 
 export async function update(options: UpdateOptions): Promise<UpdateResponse> {

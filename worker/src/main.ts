@@ -1,13 +1,10 @@
+import type { UpdateResponse } from '@meyfa/ddns-common'
+
 interface Env {
   DDNS_SECRET?: string
   CLOUDFLARE_API_TOKEN?: string
   CLOUDFLARE_ZONE_ID?: string
   CLOUDFLARE_RECORD_NAME?: string
-}
-
-interface UpdateResponse {
-  ip: string
-  modified: boolean
 }
 
 const API = new URL('https://api.cloudflare.com/client/v4/')
