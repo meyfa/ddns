@@ -3,7 +3,7 @@ import { validateEnvironment } from './config.js'
 import { log } from './log.js'
 import { setTimeout as delay } from 'node:timers/promises'
 
-const env = validateEnvironment(process.env)
+const config = validateEnvironment(process.env)
 
 const abortController = new AbortController()
 for (const signal of ['SIGTERM', 'SIGINT'] as const) {
@@ -16,11 +16,11 @@ for (const signal of ['SIGTERM', 'SIGINT'] as const) {
 function run() {
   log('info', 'Updating DDNS')
 
-  const signal = AbortSignal.any([abortController.signal, AbortSignal.timeout(env.DDNS_REQUEST_TIMEOUT * 1000)])
+  const signal = AbortSignal.any([abortController.signal, AbortSignal.timeout(config.DDNS_REQUEST_TIMEOUT * 1000)])
 
   update({
-    url: env.DDNS_URL,
-    secret: env.DDNS_SECRET,
+    url: config.DDNS_URL,
+    secret: config.DDNS_SECRET,
     signal
   })
     .then((result) => {
@@ -35,7 +35,7 @@ while (!abortController.signal.aborted) {
   run()
 
   try {
-    await delay(env.DDNS_UPDATE_INTERVAL * 1000, undefined, { signal: abortController.signal })
+    await delay(config.DDNS_UPDATE_INTERVAL * 1000, undefined, { signal: abortController.signal })
   } catch (ignored: unknown) {
     // aborted
   }
