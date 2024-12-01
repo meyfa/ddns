@@ -58,7 +58,7 @@ Configure the following variables:
 Then deploy the worker code:
 
 ```sh
-npm --prefix=worker install && npm run deploy
+npm install && npm run deploy
 ```
 
 ### Client
@@ -110,7 +110,7 @@ networks:
 Install dependencies:
 
 ```sh
-npm install && npm --prefix=worker install && npm --prefix=client install
+npm install
 ```
 
 Run linting:
@@ -122,13 +122,13 @@ npm run lint
 Build the client without Docker:
 
 ```sh
-npm --prefix=client run build
+npm run build
 ```
 
 Build the client Docker image:
 
 ```sh
-docker build --tag=ddns-client ./client
+docker build --tag=ddns-client --file=client/Dockerfile ./
 ```
 
 Deploy the worker:

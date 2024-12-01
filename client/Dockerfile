@@ -3,19 +3,24 @@
 FROM node:20.18.1-alpine AS build
 WORKDIR /app
 
-COPY package*.json ./
+COPY ./package*.json ./
+COPY ./client/package*.json ./client/
 RUN npm ci
 
-COPY . .
+COPY ./tsconfig.json ./
+COPY ./client ./client
 RUN npm run build
 
 FROM node:20.18.1-alpine AS deploy
 WORKDIR /app
 
-COPY package*.json ./
-RUN npm ci --omit=dev && apk add --no-cache tini
+RUN apk add --no-cache tini
 
-COPY --from=build /app/dist ./dist
+COPY ./package*.json ./
+COPY ./client/package*.json ./client/
+RUN npm ci --omit=dev
+
+COPY --from=build /app/client/dist ./client/dist
 
 USER node
 
@@ -27,4 +32,4 @@ ENV DDNS_UPDATE_INTERVAL='300'
 ENV DDNS_REQUEST_TIMEOUT='30'
 
 ENTRYPOINT ["/sbin/tini", "--"]
-CMD ["node", "--enable-source-maps", "dist/main.js"]
+CMD ["node", "--enable-source-maps", "--disable-proto=delete", "client/dist/main.js"]
