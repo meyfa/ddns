@@ -2,11 +2,12 @@
   "private": true,
   "name": "@meyfa/ddns",
   "scripts": {
-    "lint": "npm run lint --workspaces",
-    "build": "npm run build --workspace=client",
-    "deploy": "npm run deploy --workspace=worker"
+    "lint": "npm run build --workspace=common && npm run lint --workspaces",
+    "build": "npm run build --workspace=common && npm run build --workspace=client",
+    "deploy": "npm run build --workspace=common && npm run deploy --workspace=worker"
   },
   "workspaces": [
+    "common",
     "client",
     "worker"
   ],
