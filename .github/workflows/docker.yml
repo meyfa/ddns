@@ -34,3 +34,13 @@ jobs:
           tags:  meyfa/ddns-client:latest
           cache-from: type=gha
           cache-to: type=gha,mode=max
+
+      # See: https://docs.docker.com/build/ci/github-actions/update-dockerhub-desc/
+      - name: Update DockerHub description
+        uses: peter-evans/dockerhub-description@e98e4d1628a5f3be2be7c231e50981aee98723ae # v4.0.0
+        with:
+          username: meyfa
+          password: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
+          repository: meyfa/ddns-client
+          short-description: ${{ github.event.repository.description }}
+          enable-url-completion: true
