@@ -1,10 +1,19 @@
-import type { UpdateResponse } from '@meyfa/ddns-common'
+import { validateString, type UpdateResponse } from '@meyfa/ddns-common'
 
-interface Env {
-  DDNS_SECRET?: string
-  CLOUDFLARE_API_TOKEN?: string
-  CLOUDFLARE_ZONE_ID?: string
-  CLOUDFLARE_RECORD_NAME?: string
+interface Config {
+  DDNS_SECRET: string
+  CLOUDFLARE_API_TOKEN: string
+  CLOUDFLARE_ZONE_ID: string
+  CLOUDFLARE_RECORD_NAME: string
+}
+
+function validateEnvironment(env: Record<string, string | undefined>): Config {
+  return {
+    DDNS_SECRET: validateString(env, 'DDNS_SECRET'),
+    CLOUDFLARE_API_TOKEN: validateString(env, 'CLOUDFLARE_API_TOKEN'),
+    CLOUDFLARE_ZONE_ID: validateString(env, 'CLOUDFLARE_ZONE_ID'),
+    CLOUDFLARE_RECORD_NAME: validateString(env, 'CLOUDFLARE_RECORD_NAME')
+  }
 }
 
 const API = new URL('https://api.cloudflare.com/client/v4/')
@@ -13,7 +22,9 @@ const RATE_LIMIT_MS = 30_000
 let lastRequest = 0
 
 export default {
-  async fetch(req: Request, env: Env, ctx: unknown): Promise<Response> {
+  async fetch(req: Request, env: Record<string, string | undefined>, ctx: unknown): Promise<Response> {
+    const config = validateEnvironment(env)
+
     const url = new URL(req.url)
     const remoteAddress = req.headers.get('CF-Connecting-IP')
     if (remoteAddress == null) {
@@ -27,7 +38,7 @@ export default {
 
     // Authorize request
     const auth = req.headers.get('Authorization') ?? ''
-    if (!timingSafeEqual(auth, `Bearer ${env.DDNS_SECRET}`)) {
+    if (!timingSafeEqual(auth, `Bearer ${config.DDNS_SECRET}`)) {
       return new Response('Unauthorized', { status: 401 })
     }
 
@@ -51,7 +62,7 @@ export default {
     // Update records
     let modified = false
     try {
-      modified = await updateRecords(env, remoteAddress)
+      modified = await updateRecords(config, remoteAddress)
     } catch (err: unknown) {
       console.error(err)
       return new Response('Internal Server Error', { status: 500 })
@@ -87,28 +98,16 @@ function timingSafeEqual(a: string, b: string) {
   return crypto.subtle.timingSafeEqual(aBytes, bBytes)
 }
 
-async function updateRecords(env: Env, address: string): Promise<boolean> {
-  if (env.CLOUDFLARE_API_TOKEN == null || env.CLOUDFLARE_API_TOKEN === '') {
-    throw new Error('CLOUDFLARE_API_TOKEN is required')
-  }
-  if (env.CLOUDFLARE_ZONE_ID == null || env.CLOUDFLARE_ZONE_ID === '') {
-    throw new Error('CLOUDFLARE_ZONE_ID is required')
-  }
-  if (env.CLOUDFLARE_RECORD_NAME == null || env.CLOUDFLARE_RECORD_NAME === '') {
-    throw new Error('CLOUDFLARE_RECORD_NAME is required')
-  }
-
-  const record = await getRecord(env, env.CLOUDFLARE_ZONE_ID, env.CLOUDFLARE_RECORD_NAME)
+async function updateRecords(config: Config, address: string): Promise<boolean> {
+  const record = await getRecord(config, config.CLOUDFLARE_ZONE_ID, config.CLOUDFLARE_RECORD_NAME)
   if (record.content === address) {
     return false
   }
-
-  await updateRecord(env, env.CLOUDFLARE_ZONE_ID, record.id, address)
-
+  await updateRecord(config, config.CLOUDFLARE_ZONE_ID, record.id, address)
   return true
 }
 
-interface Record {
+interface DnsRecord {
   id: string
   type: string
   name: string
@@ -116,13 +115,13 @@ interface Record {
   proxied: boolean
 }
 
-async function getRecord(env: Env, zoneId: string, recordName: string): Promise<Record> {
+async function getRecord(config: Config, zoneId: string, recordName: string): Promise<DnsRecord> {
   const url = new URL(`zones/${encodeURIComponent(zoneId)}/dns_records`, API)
   url.searchParams.set('name', recordName)
 
   const res = await fetch(url, {
     headers: {
-      Authorization: `Bearer ${env.CLOUDFLARE_API_TOKEN}`
+      Authorization: `Bearer ${config.CLOUDFLARE_API_TOKEN}`
     }
   })
 
@@ -142,13 +141,13 @@ async function getRecord(env: Env, zoneId: string, recordName: string): Promise<
   return data.result[0]
 }
 
-async function updateRecord(env: Env, zoneId: string, recordId: string, address: string): Promise<void> {
+async function updateRecord(config: Config, zoneId: string, recordId: string, address: string): Promise<void> {
   const url = new URL(`zones/${encodeURIComponent(zoneId)}/dns_records/${encodeURIComponent(recordId)}`, API)
 
   const res = await fetch(url, {
     method: 'PATCH',
     headers: {
-      Authorization: `Bearer ${env.CLOUDFLARE_API_TOKEN}`,
+      Authorization: `Bearer ${config.CLOUDFLARE_API_TOKEN}`,
       'Content-Type': 'application/json'
     },
     body: JSON.stringify({
