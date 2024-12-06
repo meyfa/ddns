@@ -12,6 +12,6 @@
     "npm": ">=9"
   },
   "devDependencies": {
-    "@types/node": "20.17.9"
+    "@types/node": "22.10.1"
   }
 }
