@@ -1,6 +1,6 @@
 # check=skip=SecretsUsedInArgOrEnv
 
-FROM node:22.16.0-alpine AS build
+FROM node:22.20.0-alpine AS build
 WORKDIR /app
 
 COPY ./package*.json ./
@@ -13,7 +13,7 @@ COPY ./common ./common
 COPY ./client ./client
 RUN npm run build
 
-FROM node:22.16.0-alpine AS deploy
+FROM node:22.20.0-alpine AS deploy
 WORKDIR /app
 
 RUN apk add --no-cache tini
