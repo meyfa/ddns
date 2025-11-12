@@ -12,6 +12,6 @@
     "npm": ">=9"
   },
   "devDependencies": {
-    "@types/node": "22.18.8"
+    "@types/node": "22.19.1"
   }
 }
