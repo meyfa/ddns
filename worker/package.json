@@ -7,7 +7,7 @@
     "deploy": "wrangler deploy --config wrangler.toml"
   },
   "devDependencies": {
-    "@cloudflare/workers-types": "4.20250418.0",
+    "@cloudflare/workers-types": "4.20251115.0",
     "wrangler": "4.15.2"
   }
 }
