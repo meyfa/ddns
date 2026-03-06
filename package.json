@@ -12,10 +12,9 @@
     "worker"
   ],
   "engines": {
-    "node": ">=20",
-    "npm": ">=9"
+    "node": ">=22.18.0"
   },
   "devDependencies": {
-    "typescript": "5.9.2"
+    "typescript": "5.9.3"
   }
 }
