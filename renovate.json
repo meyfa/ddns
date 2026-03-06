@@ -7,6 +7,10 @@
     {
       "matchFileNames": ["**/Dockerfile"],
       "semanticCommitType": "fix"
+    },
+    {
+      "matchManagers": ["github-actions"],
+      "groupName": "actions"
     }
   ]
 }
